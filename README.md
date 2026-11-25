@@ -38,7 +38,7 @@ Gorosteel/
 
 | 경로 | 내용 | git |
 | --- | --- | --- |
-| `data/raw/` | **원본 데이터** (정제 전). 센서별 txt 17개, 라벨 `profile.txt`, 설명서 2개 | 제외 (3절 명령으로 받기) |
+| `data/raw/` | **원본 데이터** (정제 전). 센서별 txt 17개, 라벨 `profile.txt`, 설명서 2개 | 제외 (각자 다운로드, 3절) |
 | `data/processed/hyd_cycles.csv` | **메인 분석 데이터.** 1행 = 1사이클 (2,205행 × 74열) | 포함 |
 | `data/processed/hyd_sensors.csv` | 센서 사전과 품질 메모 | 포함 |
 | `data/processed/hyd_1hz.csv` | 1초 단위 시계열 (132,300행). 파형을 볼 때만 사용 | 제외 (스크립트로 생성) |
@@ -130,19 +130,40 @@ jupyter notebook ml/notebooks
 2. **품질 처리**: 원본에서 찾은 함정을 처리합니다 (4절).
 3. **특징 추출**: 센서마다 사이클 동안의 평균·표준편차·최솟값·최댓값을 계산합니다.
 
-### 실행 방법
+### 원본 데이터 받기 (각자 1회)
 
-저장소 루트에서 실행합니다.
+원본은 용량(약 555MB) 때문에 저장소에 올리지 않습니다. **각자 UCI에서 받아 `data/raw/`에 풉니다.** 이 폴더는 `.gitignore`에 들어 있어서 실수로 커밋되지 않습니다.
+
+zip(약 77MB) 안에는 폴더 없이 파일 20개가 바로 들어 있습니다. 저장소 루트에서 실행하세요.
+
+```powershell
+# Windows (PowerShell)
+curl.exe -L -o hydraulic.zip "https://archive.ics.uci.edu/static/public/447/condition+monitoring+of+hydraulic+systems.zip"
+Expand-Archive hydraulic.zip -DestinationPath data/raw
+Remove-Item hydraulic.zip
+```
+
+```bash
+# macOS / Linux / Git Bash
+curl -L -o hydraulic.zip "https://archive.ics.uci.edu/static/public/447/condition+monitoring+of+hydraulic+systems.zip"
+unzip hydraulic.zip -d data/raw && rm hydraulic.zip
+```
+
+다 받으면 `data/raw/`에 아래 20개 파일이 있어야 합니다. `data/raw/UCI data/` 같은 하위 폴더가 생겼다면 파일을 `data/raw/` 바로 아래로 옮겨 주세요.
+
+- 센서 17개: `PS1~PS6.txt`, `EPS1.txt`, `FS1.txt`, `FS2.txt`, `TS1~TS4.txt`, `VS1.txt`, `CE.txt`, `CP.txt`, `SE.txt`
+- 라벨: `profile.txt`
+- 설명서: `description.txt`, `documentation.txt`
+
+받기 어려우면 브라우저에서 https://archive.ics.uci.edu/dataset/447 의 Download 버튼으로 받아도 같은 파일입니다.
+
+### 분석용 CSV 만들기
+
+`data/processed/hyd_cycles.csv`와 `hyd_sensors.csv`는 저장소에 들어 있어서 **원본 없이도 바로 분석할 수 있습니다.** 정제 방식을 바꾸거나 `hyd_1hz.csv`가 필요할 때만 저장소 루트에서 실행합니다. 몇 분 걸립니다.
 
 ```bash
 pip install numpy pandas
 python ml/make_csv.py data/raw data/processed
-```
-
-몇 분 걸립니다. 원본이 없으면 아래 명령으로 받아 `data/raw/` 폴더에 압축을 풉니다.
-
-```bash
-curl -L -o hydraulic.zip "https://archive.ics.uci.edu/static/public/447/condition+monitoring+of+hydraulic+systems.zip"
 ```
 
 ---
