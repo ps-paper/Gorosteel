@@ -27,8 +27,8 @@ Gorosteel/
 │     ├─ schemas/       요청·응답 형식
 │     └─ services/      모델 불러오기 등 처리 로직
 ├─ ml/                  데이터 분석·모델 학습
-│  ├─ make_csv.py       원본 → 분석용 CSV 변환
-│  ├─ notebooks/        EDA·학습 노트북
+│  ├─ notebooks/        전처리·EDA·학습 노트북
+│  │  └─ 01_preprocessing.ipynb   원본 → 분석용 CSV (정제 초안)
 │  └─ models/           학습된 모델 저장 (git 제외)
 ├─ data/
 │  ├─ raw/              UCI 원본 (git 제외, 약 600MB)
@@ -42,7 +42,7 @@ Gorosteel/
 | `data/processed/hyd_cycles.csv` | **메인 분석 데이터.** 1행 = 1사이클 (2,205행 × 74열) | 포함 |
 | `data/processed/hyd_sensors.csv` | 센서 사전과 품질 메모 | 포함 |
 | `data/processed/hyd_1hz.csv` | 1초 단위 시계열 (132,300행). 파형을 볼 때만 사용 | 제외 (스크립트로 생성) |
-| `ml/make_csv.py` | 원본 → 분석용 CSV 변환 스크립트 | 포함 |
+| `ml/notebooks/01_preprocessing.ipynb` | 원본 → 분석용 CSV 전처리 노트북 (정제 방식은 초안) | 포함 |
 | `docs/G-1.md` | 강의 지식 베이스 (분석 원칙의 기준 문서) | 포함 |
 | `docs/프로젝트_진행요약.md` | 주제 선정 경위와 진행 기록 | 포함 |
 
@@ -116,7 +116,7 @@ jupyter notebook ml/notebooks
 
 ---
 
-## 3. 왜 `make_csv.py`가 필요한가
+## 3. 전처리 노트북이 필요한 이유
 
 `data/raw/`는 **정제되지 않은 원본**이라 바로 분석할 수 없습니다.
 
@@ -124,7 +124,7 @@ jupyter notebook ml/notebooks
 - 센서마다 샘플링 속도가 달라 열 수가 6,000 / 600 / 60으로 제각각입니다. 그래서 표 하나로 바로 합칠 수 없습니다.
 - RandomForest 같은 모델은 **1행 = 1사이클** 형태의 표가 필요합니다.
 
-`make_csv.py`가 하는 일은 세 가지입니다.
+[ml/notebooks/01_preprocessing.ipynb](ml/notebooks/01_preprocessing.ipynb)가 하는 일은 세 가지입니다. 셀마다 중간 결과와 그래프가 저장되어 있어서, 실행하지 않고 GitHub에서 열어 보기만 해도 과정을 따라갈 수 있습니다.
 
 1. **구조 변환**: 17개 행렬을 사이클 단위 표(`hyd_cycles.csv`)와 1초 단위 시계열(`hyd_1hz.csv`)로 합칩니다.
 2. **품질 처리**: 원본에서 찾은 함정을 처리합니다 (4절).
@@ -159,18 +159,22 @@ unzip hydraulic.zip -d data/raw && rm hydraulic.zip
 
 ### 분석용 CSV 만들기
 
-`data/processed/hyd_cycles.csv`와 `hyd_sensors.csv`는 저장소에 들어 있어서 **원본 없이도 바로 분석할 수 있습니다.** 정제 방식을 바꾸거나 `hyd_1hz.csv`가 필요할 때만 저장소 루트에서 실행합니다. 몇 분 걸립니다.
+`data/processed/hyd_cycles.csv`와 `hyd_sensors.csv`는 저장소에 들어 있어서 **원본 없이도 바로 분석할 수 있습니다.** 정제 방식을 바꾸거나 `hyd_1hz.csv`가 필요할 때만 노트북을 다시 실행합니다. 센서 파일을 읽는 데 몇 분 걸립니다.
 
 ```bash
-pip install numpy pandas
-python ml/make_csv.py data/raw data/processed
+pip install -r ml/requirements.txt
+jupyter notebook ml/notebooks/01_preprocessing.ipynb   # 처음부터 끝까지 실행 (Run All)
 ```
+
+- **지금 들어 있는 정제 처리는 초안입니다.** 노트북 5절의 [검토] 항목을 보고 데이터 담당자가 수업에서 배운 방식(G-1)에 맞게 정해 주세요.
+- `hyd_1hz.csv`는 노트북 8절의 `SAVE_1HZ = True`로 바꿔야 저장됩니다.
+- 처리를 바꾸면 `hyd_cycles.csv`가 달라집니다. 컬럼 이름이나 개수가 바뀌면 백엔드·모델 담당에게 알려 주세요.
 
 ---
 
 ## 4. 원본 데이터의 함정 (꼭 읽어 주세요)
 
-공식 설명은 "결측값 없음"이지만, 원본을 직접 점검해 보면(2026-11-25) 아래 문제가 있습니다. `make_csv.py`가 이미 처리했으니, CSV를 쓸 때 **의미만 알고 있으면 됩니다.**
+공식 설명은 "결측값 없음"이지만, 원본을 직접 점검해 보면(2026-11-25) 아래 문제가 있습니다. 지금 저장소의 CSV는 아래 "처리" 열대로 만든 것입니다. 이 처리는 **초안**이고, 데이터 담당자가 노트북에서 바꿀 수 있습니다.
 
 | 센서 | 발견한 문제 | 처리 | 분석할 때 주의 |
 | --- | --- | --- | --- |
