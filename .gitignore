@@ -1,0 +1,22 @@
+# 데이터: 원본(약 600MB)과 1초 시계열(17MB)은 스크립트로 재생성
+data/raw/
+data/processed/hyd_1hz.csv
+
+# 학습된 모델
+ml/models/*
+!ml/models/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Node
+node_modules/
+dist/
+
+# 환경 변수·비밀 정보
+.env
+.env.*
