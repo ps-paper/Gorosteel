@@ -1,0 +1,10 @@
+{
+  "description": "UCI 유압 시험장치의 냉각기, 밸브, 펌프, 축압기 상태를 모니터링하고 AI 이상 진단과 점검 우선순위, 조기경보를 제공해 설비 담당자의 예방 정비를 돕습니다.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
