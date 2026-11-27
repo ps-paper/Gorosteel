@@ -1,0 +1,9 @@
+{
+ "title": "냉각기·축압기 LDA vs RF",
+ "test": "McNemar (Holm)",
+ "stat": "χ² = 305 / χ² = 570",
+ "p": 5.2868226836317974e-68,
+ "effect": "LDA만 310 vs RF만 1 / LDA만 632 vs RF만 21",
+ "verdict": "H0 기각",
+ "note": "밸브·펌프도 v1에서 LDA 우세"
+}

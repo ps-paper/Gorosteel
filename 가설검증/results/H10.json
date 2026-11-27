@@ -1,0 +1,8 @@
+{
+ "title": "정규성·등분산",
+ "test": "D'Agostino K², Levene",
+ "stat": "Levene W = 18~145",
+ "p": 1.0187314130835651e-11,
+ "effect": "정규성 기각 17/17 그룹",
+ "verdict": "H0 기각 (비모수 검정 사용)"
+}
