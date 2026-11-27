@@ -1,0 +1,8 @@
+{
+ "title": "냉각기 상태 → 냉각 효율",
+ "test": "Kruskal-Wallis",
+ "stat": "H(2) = 1956.4",
+ "p": 0.0,
+ "effect": "ε² = 0.888 (큼)",
+ "verdict": "H0 기각"
+}
